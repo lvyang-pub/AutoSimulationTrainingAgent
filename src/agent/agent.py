@@ -71,7 +71,7 @@ class TuningAgent:
                  max_llm_steps: int = 24, client: LLMClient | None = None,
                  system_prompt: str | None = None, extra_hint: str = "",
                  fault_after: int | None = None, command: list[float] | None = None,
-                 start_config: dict | None = None):
+                 start_config: dict | None = None, visualize: bool = True):
         self.goals = goals
         self.task_name = task_name
         self.command = list(command) if command else [1.0, 0.0, 0.0]
@@ -85,7 +85,8 @@ class TuningAgent:
 
         fixed_reward = (self.start_config.get("env", {}) or {}).get("reward")
         self.ctx = ToolContext(runs_root, task_name, max_trials, max_wall_seconds,
-                               default_timesteps, fixed_reward=fixed_reward)
+                               default_timesteps, fixed_reward=fixed_reward,
+                               visualize=visualize)
         self.tools = Tools(self.ctx)
         # fault injection: fail the run_training call whose 1-based index equals
         # fault_after, once. Used to measure robustness/recovery.

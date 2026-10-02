@@ -52,7 +52,7 @@ class ToolContext:
 
     def __init__(self, runs_root: str, task_name: str, max_trials: int,
                  max_wall_seconds: float, default_timesteps: int,
-                 fixed_reward: dict | None = None):
+                 fixed_reward: dict | None = None, visualize: bool = True):
         self.runs_root = runs_root
         self.task_name = task_name
         self.max_trials = max_trials
@@ -61,6 +61,8 @@ class ToolContext:
         # When set, every run_training forces this reward, so returns are
         # comparable across trials (the task fixes the yardstick).
         self.fixed_reward = fixed_reward
+        # Render a rollout video + curve after each trial (best-effort).
+        self.visualize = visualize
         self.runs: dict[str, RunRecord] = {}
         self.trial_count = 0
         self.finished = False
@@ -109,7 +111,8 @@ class Tools:
         last_exc = None
         for attempt in range(retries + 1):
             try:
-                summary = train(config, run_dir, verbose=0)
+                summary = train(config, run_dir, verbose=0,
+                                visualize=self.ctx.visualize)
                 norm_cfg, warnings = normalize(config)
                 if reward_forced:
                     warnings = warnings + ["env.reward is fixed by the task; "

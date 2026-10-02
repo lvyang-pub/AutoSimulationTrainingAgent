@@ -39,7 +39,7 @@ def run_agent_on_task(task: Task, runs_root: str, longterm_path: str,
         longterm_path=longterm_path, default_timesteps=task.default_timesteps,
         max_trials=task.max_trials, client=llm, system_prompt=system_prompt,
         extra_hint=extra_hint, fault_after=fault_after, command=task.command,
-        start_config=task.start_config,
+        start_config=task.start_config, visualize=False,
     )
     res = agent.run()
     m = res.best_metrics
@@ -62,7 +62,7 @@ def run_agent_on_task(task: Task, runs_root: str, longterm_path: str,
 def _train_and_score(cfg: dict, task: Task, out_dir: str) -> dict:
     cfg = dict(cfg)
     cfg.setdefault("env", {})["command"] = task.command
-    summary = train(cfg, out_dir, verbose=0)
+    summary = train(cfg, out_dir, verbose=0, visualize=False)
     return summary
 
 

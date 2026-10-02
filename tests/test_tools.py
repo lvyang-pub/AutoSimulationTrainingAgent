@@ -85,7 +85,7 @@ def test_run_training_records_and_reports(tmp_path, monkeypatch):
         "convergence_delta": 2.0, "train_seconds": 0.01,
     }
 
-    def fake_train(config, out_dir, verbose=0):
+    def fake_train(config, out_dir, verbose=0, visualize=True):
         import os
         os.makedirs(out_dir, exist_ok=True)
         return dict(fake_summary)
@@ -104,7 +104,7 @@ def test_fixed_reward_overrides_agent_supplied_reward(tmp_path, monkeypatch):
     fixed = {"alive": 0.2, "track_lin_vel": 2.0}
     seen = {}
 
-    def fake_train(config, out_dir, verbose=0):
+    def fake_train(config, out_dir, verbose=0, visualize=True):
         import os
         os.makedirs(out_dir, exist_ok=True)
         seen["reward"] = config["env"]["reward"]
@@ -125,7 +125,7 @@ def test_timesteps_clamped_to_task_budget(tmp_path, monkeypatch):
     """The agent cannot out-train the baselines by asking for more steps."""
     seen = {}
 
-    def fake_train(config, out_dir, verbose=0):
+    def fake_train(config, out_dir, verbose=0, visualize=True):
         import os
         os.makedirs(out_dir, exist_ok=True)
         seen["timesteps"] = config["timesteps"]
@@ -142,7 +142,7 @@ def test_timesteps_clamped_to_task_budget(tmp_path, monkeypatch):
 def test_smaller_timesteps_allowed(tmp_path, monkeypatch):
     """A cheaper probe is fine — only the ceiling is enforced."""
     seen = {}
-    def fake_train(config, out_dir, verbose=0):
+    def fake_train(config, out_dir, verbose=0, visualize=True):
         import os
         os.makedirs(out_dir, exist_ok=True)
         seen["timesteps"] = config["timesteps"]
@@ -158,7 +158,7 @@ def test_no_fixed_reward_leaves_agent_reward_alone(tmp_path, monkeypatch):
     """Without pinning, an agent-supplied reward is honored (used by the demo)."""
     seen = {}
 
-    def fake_train(config, out_dir, verbose=0):
+    def fake_train(config, out_dir, verbose=0, visualize=True):
         import os
         os.makedirs(out_dir, exist_ok=True)
         seen["reward"] = config["env"]["reward"]
@@ -170,6 +170,41 @@ def test_no_fixed_reward_leaves_agent_reward_alone(tmp_path, monkeypatch):
     t = Tools(_ctx(tmp_path))
     t.run_training(config={"env": {"reward": {"alive": 7.0}}})
     assert seen["reward"]["alive"] == 7.0
+
+
+def test_visualize_flag_threads_to_train(tmp_path, monkeypatch):
+    """run_training must pass the context's visualize switch to train()."""
+    seen = {}
+
+    def fake_train(config, out_dir, verbose=0, visualize=True):
+        import os
+        os.makedirs(out_dir, exist_ok=True)
+        seen["visualize"] = visualize
+        return {"mean_return": 1.0, "std_return": 0.0, "fall_rate": 0.0,
+                "mean_lin_vel_error": 1.0, "mean_episode_length": 500.0,
+                "convergence_delta": 0.0, "train_seconds": 0.0}
+
+    monkeypatch.setattr(tools_mod, "train", fake_train)
+    ctx = ToolContext(str(tmp_path / "runs"), "task", 3, 600.0, 1000,
+                      visualize=False)
+    Tools(ctx).run_training(config={})
+    assert seen["visualize"] is False
+
+
+def test_visualize_defaults_on(tmp_path, monkeypatch):
+    seen = {}
+
+    def fake_train(config, out_dir, verbose=0, visualize=True):
+        import os
+        os.makedirs(out_dir, exist_ok=True)
+        seen["visualize"] = visualize
+        return {"mean_return": 1.0, "std_return": 0.0, "fall_rate": 0.0,
+                "mean_lin_vel_error": 1.0, "mean_episode_length": 500.0,
+                "convergence_delta": 0.0, "train_seconds": 0.0}
+
+    monkeypatch.setattr(tools_mod, "train", fake_train)
+    Tools(_ctx(tmp_path)).run_training(config={})
+    assert seen["visualize"] is True
 
 
 def test_schemas_shape(tmp_path):

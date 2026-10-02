@@ -25,6 +25,18 @@ python scripts/run_agent.py --task go2_tune_v1 --out runs/agent_v1
 python scripts/run_eval.py --tasks go2_tune_v1 go2_tune_hard --out eval/round1
 ```
 
+## 训练结果可视化
+
+每次训练结束后会**自动**产出一轮结果可视化，落盘在对应运行目录下（如 `runs/agent_v1/runs/trial_001/`）：
+
+- `rollout.mp4` — 一次确定性 rollout 的离屏渲染视频（训练好的策略「跑起来」的样子）；
+  若环境没有 OpenCV，自动退化为 `rollout.gif`，**不需要额外依赖**。
+- `curve.png` — episode return 与周期性评估 return 随 timesteps 的学习曲线。
+
+可视化是尽力而为的旁路，渲染失败不影响训练与指标。训练脚本用 `--no-viz`、
+评测脚本默认关闭（批量评测不必逐 trial 渲染），也可单独跑
+`python -m src.training.train_ppo --out runs/demo --timesteps 3000` 查看效果。
+
 ## 目录结构
 
 ```

@@ -102,8 +102,14 @@ def evaluate(policy, env_cfg: dict, n_episodes: int, seed: int = 0,
 
 
 def train(config: dict, out_dir: str, verbose: int = 0,
-          progress_cb=None, eval_freq: int | None = None) -> dict:
-    """Train one run. `config` may be partial; it is normalized internally."""
+          progress_cb=None, eval_freq: int | None = None,
+          visualize: bool = True) -> dict:
+    """Train one run. `config` may be partial; it is normalized internally.
+
+    With `visualize=True` (default), one deterministic rollout is rendered to a
+    short video and a learning-curve PNG is written into `out_dir` after training.
+    Visualization is best-effort and never affects the returned summary.
+    """
     cfg, warnings = normalize(config)
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, "config.json"), "w", encoding="utf-8") as fh:
@@ -161,6 +167,19 @@ def train(config: dict, out_dir: str, verbose: int = 0,
                         f"{e['std_return']:.3f}", f"{e['fall_rate']:.3f}",
                         f"{e['mean_lin_vel_error']:.4f}"])
 
+    # post-training visualization: one deterministic rollout video + curve PNG.
+    # Best-effort; a rendering failure leaves these as None.
+    rollout_path = curve_path = None
+    if visualize:
+        from . import viz
+        rollout_path = viz.render_rollout(
+            model, cfg["env"], out_dir, stem="rollout",
+            n_steps=int(cfg["env"].get("episode_length", 500)),
+            seed=seed + 54321, fps=30)
+        curve_path = viz.plot_training_curve(
+            os.path.join(out_dir, "metrics.csv"),
+            os.path.join(out_dir, "curve.png"))
+
     # convergence signal: improvement of the last quarter of evals vs the first
     evals = cb.evals
     convergence = None
@@ -182,6 +201,7 @@ def train(config: dict, out_dir: str, verbose: int = 0,
         "eval_curve": [{"t": e["timesteps"], "mean_return": round(e["mean_return"], 2)}
                        for e in evals],
         "convergence_delta": round(convergence, 2) if convergence is not None else None,
+        "visualization": {"rollout": rollout_path, "curve": curve_path},
         "warnings": warnings,
     }
     with open(os.path.join(out_dir, "summary.json"), "w", encoding="utf-8") as fh:
@@ -201,6 +221,8 @@ def main() -> None:
     ap.add_argument("--out", required=True, help="output directory")
     ap.add_argument("--timesteps", type=int, help="override timesteps")
     ap.add_argument("--verbose", type=int, default=0)
+    ap.add_argument("--no-viz", action="store_true",
+                    help="skip the post-training rollout video + curve")
     args = ap.parse_args()
 
     cfg = {}
@@ -210,8 +232,12 @@ def main() -> None:
     if args.timesteps:
         cfg["timesteps"] = args.timesteps
 
-    summary = train(cfg, args.out, verbose=args.verbose)
+    summary = train(cfg, args.out, verbose=args.verbose, visualize=not args.no_viz)
     print(json.dumps(summary, indent=2))
+    vis = summary.get("visualization") or {}
+    for kind, path in vis.items():
+        if path:
+            print(f"{kind}: {path}")
 
 
 if __name__ == "__main__":

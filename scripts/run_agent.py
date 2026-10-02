@@ -28,6 +28,8 @@ def main() -> None:
     ap.add_argument("--longterm", default="memory/longterm.json")
     ap.add_argument("--hint", default="", help="extra strategy note")
     ap.add_argument("--log-dir", default="log", help="where the run transcript is written")
+    ap.add_argument("--no-viz", action="store_true",
+                    help="skip the per-trial rollout video + curve PNG")
     args = ap.parse_args()
 
     log_path, _fh = start("agent", args.log_dir)
@@ -46,6 +48,7 @@ def main() -> None:
         extra_hint=(args.hint or task.hint),
         command=task.command,
         start_config=task.start_config,
+        visualize=not args.no_viz,
     )
     result = agent.run()
     with open(os.path.join(args.out, "result.json"), "w", encoding="utf-8") as fh:
