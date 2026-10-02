@@ -1,0 +1,39 @@
+# ---- secrets / local config ----
+.env
+*.local
+**/.env
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+venv/
+.venv/
+env/
+
+# ---- MuJoCo Go2 model (auto-downloaded by scripts/setup_env.py) ----
+# Regenerated on first run; keeps the repo light.
+src/envs/go2/assets/
+src/envs/go2/go2_mjx.xml
+src/envs/go2/scene_mjx.xml
+
+# ---- run artifacts (reproducible; produced by training/eval) ----
+runs/
+log/
+memory/*.json
+eval/**/policy.zip
+eval/**/metrics.csv
+eval/**/config.json
+eval/**/summary.json
+
+# ---- scraped webpage assets (saved-page resource dumps; not source) ----
+doc/参考资料/**/*_files/
+doc/参考资料/**/*.js.下载
+
+# ---- editors / OS ----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,38 @@
+[
+  {
+    "task": "go2_tune_v1",
+    "method": "naive",
+    "success": false,
+    "best_return": 147.68045709523932,
+    "best_lin_vel_error": 0.9761762100289234,
+    "best_fall_rate": 0.0,
+    "n_trials": 1,
+    "tool_calls": 0,
+    "tool_errors": 0,
+    "wall_seconds": 92.00751161575317,
+    "total_tokens": 0,
+    "native_tool_calls": 0,
+    "fallback_tool_calls": 0,
+    "fault_injected": false,
+    "recovered_from_fault": false,
+    "notes": "single default run"
+  },
+  {
+    "task": "go2_tune_v1",
+    "method": "random",
+    "success": false,
+    "best_return": 34.1638201890223,
+    "best_lin_vel_error": 0.2241999796131824,
+    "best_fall_rate": 1.0,
+    "n_trials": 6,
+    "tool_calls": 0,
+    "tool_errors": 0,
+    "wall_seconds": 1376.7641832828522,
+    "total_tokens": 0,
+    "native_tool_calls": 0,
+    "fallback_tool_calls": 0,
+    "fault_injected": false,
+    "recovered_from_fault": false,
+    "notes": "random search"
+  }
+]

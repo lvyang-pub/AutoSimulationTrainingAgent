@@ -1,0 +1,9 @@
+# AutoSimulationTrainingAgent — runtime dependencies
+# Versions verified on Python 3.13 (Windows, CPU).
+mujoco==3.10.0
+gymnasium==1.3.0
+stable-baselines3==2.9.0
+torch>=2.14
+numpy>=2.0
+openai>=2.0
+pytest>=8.0
