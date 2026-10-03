@@ -1,0 +1,6 @@
+{
+  "agent_name": "CurveAnalyst",
+  "model": "deepseek-chat",
+  "log_dir": "logs",
+  "_comment": "paths are relative to this config.json; schedular overwrites log_dir at runtime"
+}

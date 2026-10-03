@@ -2,6 +2,10 @@
 .env
 *.local
 **/.env
+.claude/
+
+# ---- archived / scratch ----
+tmp/
 
 # ---- Python ----
 __pycache__/
@@ -9,28 +13,20 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .ipynb_checkpoints/
+# Anchor to repo root so it only matches a virtualenv dir, NOT the Env layer
+# (Envs/Go2Locomotion-PPO/env/ holds source + the localized Go2 model).
+/env/
 venv/
 .venv/
-env/
 
-# ---- MuJoCo Go2 model (auto-downloaded by scripts/setup_env.py) ----
-# Regenerated on first run; keeps the repo light.
-src/envs/go2/assets/
-src/envs/go2/go2_mjx.xml
-src/envs/go2/scene_mjx.xml
-
-# ---- run artifacts (reproducible; produced by training/eval) ----
+# ---- run artifacts (reproducible; produced by training) ----
+Tasks/**/Runs/
 runs/
 log/
-memory/*.json
-eval/**/policy.zip
-eval/**/metrics.csv
-eval/**/config.json
-eval/**/summary.json
 
 # ---- scraped webpage assets (saved-page resource dumps; not source) ----
-doc/参考资料/**/*_files/
-doc/参考资料/**/*.js.下载
+Docs/doc/参考资料/**/*_files/
+Docs/doc/参考资料/**/*.js.下载
 
 # ---- editors / OS ----
 .idea/

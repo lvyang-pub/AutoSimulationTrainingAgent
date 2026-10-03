@@ -1,0 +1,182 @@
+{
+  "parameters": {
+    "timesteps": 200000,
+    "seed": 0,
+    "n_envs": 4,
+    "net_arch": [
+      64,
+      64
+    ],
+    "ppo": {
+      "learning_rate": 0.0003,
+      "n_steps": 256,
+      "batch_size": 256,
+      "n_epochs": 5,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip_range": 0.2,
+      "ent_coef": 0.005,
+      "vf_coef": 0.5,
+      "max_grad_norm": 0.5
+    },
+    "env": {
+      "dt": 0.02,
+      "frame_skip": 4,
+      "episode_length": 256,
+      "action_scale": 0.4,
+      "kp": 80.0,
+      "kd": 1.6,
+      "max_torque": 23.7,
+      "min_height": 0.18,
+      "max_tilt": 0.7,
+      "terminate_on_fall": true,
+      "command": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "reward": {
+        "track_lin_vel": 3.0,
+        "track_ang_vel": -0.5,
+        "lin_vel_z": -1.0,
+        "ang_vel_xy": -0.05,
+        "orientation": -1.0,
+        "action_rate": -0.005,
+        "torques": -0.0001,
+        "base_height": -50.0,
+        "alive": 0.0,
+        "termination": -150.0
+      }
+    }
+  },
+  "spec": {
+    "timesteps": {
+      "min": 10000,
+      "max": 2000000
+    },
+    "seed": {
+      "min": 0,
+      "max": 100000
+    },
+    "n_envs": {
+      "min": 4,
+      "max": 4
+    },
+    "ppo.learning_rate": {
+      "min": 1e-05,
+      "max": 0.01
+    },
+    "ppo.n_steps": {
+      "min": 256,
+      "max": 256
+    },
+    "ppo.batch_size": {
+      "min": 256,
+      "max": 256
+    },
+    "ppo.n_epochs": {
+      "min": 1,
+      "max": 30
+    },
+    "ppo.gamma": {
+      "min": 0.9,
+      "max": 0.9999
+    },
+    "ppo.gae_lambda": {
+      "min": 0.8,
+      "max": 1.0
+    },
+    "ppo.clip_range": {
+      "min": 0.05,
+      "max": 0.6
+    },
+    "ppo.ent_coef": {
+      "min": 0.0,
+      "max": 0.05
+    },
+    "ppo.vf_coef": {
+      "min": 0.1,
+      "max": 1.0
+    },
+    "ppo.max_grad_norm": {
+      "min": 0.1,
+      "max": 2.0
+    },
+    "env.dt": {
+      "min": 0.005,
+      "max": 0.05
+    },
+    "env.frame_skip": {
+      "min": 1,
+      "max": 20
+    },
+    "env.episode_length": {
+      "min": 256,
+      "max": 256
+    },
+    "env.action_scale": {
+      "min": 0.1,
+      "max": 1.5
+    },
+    "env.kp": {
+      "min": 5.0,
+      "max": 120.0
+    },
+    "env.kd": {
+      "min": 0.1,
+      "max": 5.0
+    },
+    "env.max_torque": {
+      "min": 5.0,
+      "max": 45.0
+    },
+    "env.min_height": {
+      "min": 0.08,
+      "max": 0.26
+    },
+    "env.max_tilt": {
+      "min": 0.3,
+      "max": 1.2
+    },
+    "env.reward.track_lin_vel": {
+      "min": 0.0,
+      "max": 5.0
+    },
+    "env.reward.track_ang_vel": {
+      "min": -2.0,
+      "max": 0.0
+    },
+    "env.reward.lin_vel_z": {
+      "min": -10.0,
+      "max": 0.0
+    },
+    "env.reward.ang_vel_xy": {
+      "min": -1.0,
+      "max": 0.0
+    },
+    "env.reward.orientation": {
+      "min": -10.0,
+      "max": 0.0
+    },
+    "env.reward.action_rate": {
+      "min": -0.1,
+      "max": 0.0
+    },
+    "env.reward.torques": {
+      "min": -0.005,
+      "max": 0.0
+    },
+    "env.reward.base_height": {
+      "min": -50.0,
+      "max": 0.0
+    },
+    "env.reward.alive": {
+      "min": 0.0,
+      "max": 2.0
+    },
+    "env.reward.termination": {
+      "min": -200.0,
+      "max": 0.0
+    }
+  }
+}

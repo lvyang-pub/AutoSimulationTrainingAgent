@@ -1,0 +1,9 @@
+{
+  "agent_name": "PPOTuner",
+  "model": "deepseek-reasoner",
+  "memory_dir": "memory",
+  "log_dir": "logs",
+  "harness_path": "../../Harness",
+  "env_path": "../../Envs/Go2Locomotion-PPO",
+  "_comment": "all paths are relative to this config.json; schedular overwrites memory_dir, log_dir, env_path at runtime"
+}

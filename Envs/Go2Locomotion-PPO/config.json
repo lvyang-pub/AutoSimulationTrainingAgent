@@ -1,0 +1,7 @@
+{
+  "env_name": "Go2Locomotion-PPO",
+  "parameters_path": "parameters.json",
+  "runs_root": "runs",
+  "observations_dir": "observations",
+  "_comment": "paths are relative to this config.json; schedular overwrites runs_root and observations_dir at runtime"
+}

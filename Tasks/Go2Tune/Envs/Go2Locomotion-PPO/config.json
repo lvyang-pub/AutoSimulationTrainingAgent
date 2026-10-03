@@ -1,0 +1,7 @@
+{
+  "env_name": "Go2Locomotion-PPO",
+  "parameters_path": "C:\\projects\\009\\Software\\Simulation\\AutoSimulationTrainingAgent\\Tasks\\Go2Tune\\Envs\\Go2Locomotion-PPO\\parameters.json",
+  "runs_root": "C:\\projects\\009\\Software\\Simulation\\AutoSimulationTrainingAgent\\Tasks\\Go2Tune\\Runs\\20261003_183952\\training_runs",
+  "observations_dir": "C:\\projects\\009\\Software\\Simulation\\AutoSimulationTrainingAgent\\Tasks\\Go2Tune\\Runs\\20261003_183952\\env_observations",
+  "_comment": "paths are relative to this config.json; schedular overwrites runs_root and observations_dir at runtime"
+}
