@@ -1,9 +1,10 @@
+[中文文档](Docs/README.zh.md)
+
 # Auto Simulation Training Agent (ASTA)
 
 An agentic framework for autonomous robot training in simulation, built on MuJoCo.
 Supports arbitrary robot environments and training configurations.
 
-[中文文档](Docs/README.zh.md)
 
 ## Features
 
@@ -47,7 +48,7 @@ and manages run artifacts.
 
 ### Runtime flow
 
-End-to-end control flow from CLI invocation to `summary.json` on disk.
+End-to-end control flow from CLI invocation to the training goal being reached.
 
 ![Runtime Flow](assets/flow_diagram.png)
 
@@ -75,19 +76,14 @@ train → analyze → tune → retrain until the goal is met:
 python Tasks/Go2Tune/schedular.py
 ```
 
-All run artifacts (agent memory, env observations, per-trial training outputs, logs)
-land under `Tasks/Go2Tune/Runs/YYYYMMDD_HHMMSS/`. The `summary.json` at the run
-root records success status, the best trial, and the final metrics.
+All run artifacts (agent memory, env observations, per-trial configs and results, logs)
+land under `Tasks/Go2Tune/Runs/YYYYMMDD_HHMMSS/`. The folder name is the run start time.
+`summary.json` records success status, the best trial, and the final metrics.
 
 Optional flags:
 - `--no-viz` — skip post-training rollout rendering
 - `--wall SECONDS` — total wall-clock budget
-- `--timesteps N` — per-trial training step budget (default 200 000)
-
-### Train once (no agent)
-
-Run a single PPO trial directly, using parameters from
-`Envs/Go2Locomotion-PPO/parameters.json`:
+- `--timesteps N` — per-trial training step budget
 
 ```bash
 python Envs/Go2Locomotion-PPO/training/train_ppo.py \
@@ -99,29 +95,11 @@ python Envs/Go2Locomotion-PPO/training/train_ppo.py \
 ### Custom tasks and environments
 
 The project is organized in three layers: **Env / Agent / Task**.
-A Task's `schedular.py` wires one Agent to one Env for a single autonomous tuning
-run. Layers communicate only through `Harness/exec.py` — the Agent never imports
-Env code directly, so **swapping the Env requires no Agent changes, and vice versa**.
+A Task's `schedular.py` wires one or more Agents and Envs for a single autonomous
+tuning run. All communication between Agents and Envs goes exclusively through
+`Harness/exec.py`.
 
-#### Add a new Task (reuse existing Env + Agent)
-
-Copy `Tasks/Go2Tune/` to a new directory (e.g. `Tasks/MyTune/`) and edit
-`schedular.py`:
-
-| Field | Description |
-|-------|-------------|
-| `task_name` | Identifier used in memory and logs |
-| `goals` | Success criteria, e.g. `{"mean_lin_vel_error_max": 0.25, "fall_rate_max": 0.2}` |
-| `default_timesteps` | Per-trial step budget |
-| `start_config` | Weak starting configuration the agent improves from |
-| `AGENT_TEMPLATE` / `ENV_TEMPLATE` | Paths to the Agent / Env template directories |
-
-`schedular.py` auto-copies templates into the Task's `Agents/` and `Envs/` on
-first run — no manual copy needed.
-
-```bash
-python Tasks/MyTune/schedular.py
-```
+---
 
 #### Add a new Env
 
@@ -132,57 +110,38 @@ Envs/MyEnv-PPO/
 ├── config.json          # path config, overwritten by schedular at runtime
 ├── parameters.json      # {"parameters": {...}, "spec": {key: {min, max}}}
 ├── env/                 # simulation assets and dynamics
-├── training/
-│   ├── config.py        # normalize(user_cfg) -> (cfg, warnings)
-│   └── train_ppo.py     # train(...)  evaluate_from_zip(...)
-├── observation/
+├── training/            # training algorithm implementation
+│   ├── config.py
+│   └── train_ppo.py
+├── observation/         # API the Env exposes to the Agent for observations
 │   ├── README.md
-│   └── metrics.py       # get_trial_summary / get_eval_curve / list_trials
-└── action/
+│   └── metrics.py
+└── action/              # API the Env exposes to the Agent for configuration
     ├── README.md
-    └── configure.py     # get_params / set_params / reset_params
+    └── configure.py     # reset_params / get_param_spec
 ```
 
-The Agent's tool layer calls these **fixed function names** via the Harness;
-new Envs must implement them with matching signatures.
+---
 
-`train()` must return a summary dict containing at minimum:
+#### Add a new Task (reuse existing Env + Agent — most common)
 
+1. Copy `Tasks/Go2Tune/` to a new directory (e.g. `Tasks/MyTune/`)
+
+2. Edit `schedular.py`:
+
+| Field | Description |
+|-------|-------------|
+| `task_name` | Identifier used in long-term memory and logs |
+| `goals` | Success criteria, e.g. `{"mean_lin_vel_error_max": 0.25, "fall_rate_max": 0.2}` |
+| `default_timesteps` | Default per-trial training step budget |
+| `start_config` | Initial training configuration |
+
+3. Copy the Agent and Env you want to use into the Task directory
+
+4. Run:
+```bash
+python Tasks/MyTune/schedular.py
 ```
-mean_return, std_return, fall_rate, mean_lin_vel_error,
-mean_episode_length, convergence_delta, train_seconds, timesteps
-```
 
-> **Note:** `Agents/PPOTuner`'s prompts and `goal_met` logic are written for the
-> Go2 forward-walking task (`mean_lin_vel_error` / `fall_rate`). For environments
-> with different observation metrics, update `main.py` and `tools.py` accordingly,
-> or write a new Agent that reuses the same Env interface.
-
-
-## Visualization
-
-After every training trial, visualizations are written to that trial's directory
-(e.g. `Tasks/Go2Tune/Runs/<timestamp>/training_runs/trial_006/`):
-
-- `rollout.mp4` — deterministic policy rollout, rendered off-screen via MuJoCo.
-  Falls back to `rollout.gif` if OpenCV is unavailable — no extra dependencies needed.
-- `curve.png` — episode return and periodic evaluation return vs. timesteps.
-- `metrics.csv` / `summary.json` — per-episode metrics and run summary
-  (read by `observation/metrics.py`).
-
-Visualization is best-effort; a rendering failure never interrupts training.
-Pass `--no-viz` to skip it entirely.
-
-
-## Directory Structure
-
-```
-Agents/                 Agents (PPOTuner tuning agent, CurveAnalyst image analyzer)
-Envs/Go2Locomotion-PPO/ Env: env/ (sim + reward), training/ (PPO),
-                        observation/ (metrics API), action/ (configure API), parameters.json
-Harness/exec.py         Isolation bridge — dynamically calls Env functions for the Agent
-Tasks/Go2Tune/          Task: schedular.py entry point + runtime Agent/Env copies
-  Runs/YYYYMMDD_HHMMSS/ Per-run artifacts (agent_memory / env_observations / training_runs / logs)
-Docs/                   Design docs, requirements, dev log, reference material
-assets/                 README assets (GIFs, diagrams)
-```
+The current implementation targets training the Unitree Go2 to walk forward at a
+specific speed. You can create new Envs, Agents, and Tasks to fit your own goals.
