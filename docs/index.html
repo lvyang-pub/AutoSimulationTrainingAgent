@@ -147,6 +147,79 @@
     .sidebar-nav > ul > li.collapse > strong::after { transform: rotate(-90deg); }
     .sidebar-nav > ul > li.collapse > ul { display: none; }
     .sidebar-nav > ul > li > ul { margin-left: 15px; }
+
+    /* ───────── 深蓝配色：文档内容区 ───────── */
+    html, body { background: #0d2035 !important; }
+    body { color: #c8d6e5 !important; }
+
+    /* 侧边栏 */
+    .sidebar {
+      background: #091a2b !important;
+      border-right: 1px solid #1e3a5f;
+    }
+    .sidebar .app-name-link,
+    .sidebar ul li a { color: #a9bcce; }
+    .sidebar ul li a:hover { color: #eaf3fc; }
+    .sidebar ul li.active > a { color: #6cb2f0 !important; }
+
+    /* 正文 */
+    .content { background: #0d2035 !important; }
+    .markdown-section { color: #c8d6e5 !important; }
+    .markdown-section h1,
+    .markdown-section h2,
+    .markdown-section h3,
+    .markdown-section h4,
+    .markdown-section h5,
+    .markdown-section h6 { color: #eaf3fc !important; }
+    .markdown-section h2 { border-bottom: 1px solid #1e3a5f; }
+    .markdown-section a { color: #6cb2f0 !important; }
+    .markdown-section strong { color: #f2f7fc; }
+    .markdown-section hr { border-bottom: 1px solid #1e3a5f; }
+
+    /* 代码 */
+    .markdown-section code {
+      background: #08131f !important;
+      color: #ffcb6b;
+    }
+    .markdown-section pre {
+      background: #08131f !important;
+      border: 1px solid #1e3a5f;
+    }
+    .markdown-section pre > code {
+      background: transparent !important;
+      color: #d6e2f0;
+    }
+
+    /* 表格 */
+    .markdown-section table tr { border-top: 1px solid #1e3a5f; }
+    .markdown-section table th,
+    .markdown-section table td { border: 1px solid #1e3a5f; }
+    .markdown-section table th { background: #0f2a45 !important; color: #eaf3fc; }
+    .markdown-section table tr:nth-child(2n) { background: #0b1c2f; }
+
+    /* 引用块 */
+    .markdown-section blockquote {
+      border-left: 4px solid #2a5580;
+      background: #0f2439;
+      color: #b6c6d8;
+    }
+
+    /* 搜索框 */
+    .search input {
+      background: #08131f !important;
+      border: 1px solid #1e3a5f;
+      color: #d6e2f0;
+    }
+    .search .results-panel { background: #0f2439; }
+    .search h2 { color: #eaf3fc; }
+    .search .matching-post { border-bottom: 1px solid #1e3a5f; }
+
+    /* 分页组件 */
+    .docsify-pagination-container { border-top: 1px solid #1e3a5f; }
+    .pagination-item a { color: #a9bcce; }
+    .pagination-item a:hover { color: #eaf3fc; }
+    .pagination-item-title { color: #eaf3fc; }
+    .pagination-item-label { color: #6cb2f0; }
   </style>
 </head>
 <body>
