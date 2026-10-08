@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-darklight-theme@3/dist/docsify-themeable/style.min.css">
 
   <style>
+    /* 解析时即锁定主题色，避免 vue.css 里 #42b983（黄绿）兜底值在 JS 注入前闪现 */
+    :root { --theme-color: #38bdf8; }
     /* ───────── 封面：图像轮播背景 + 模糊遮罩 ───────── */
     /* 不要覆盖 Docsify 自带定位（.cover 已是定位元素，即子元素的包含块） */
     section.cover { overflow: hidden; }
