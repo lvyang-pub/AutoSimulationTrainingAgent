@@ -1,0 +1,31 @@
+<!-- _sidebar.md -->
+
+- [项目简介](zh/README.md)
+- **快速开始**
+  - [快速上手](zh/guide/quickstart.md)
+  - [创建智能体](zh/guide/create-agent.md)
+  - [创建环境](zh/guide/create-env.md)
+  - [创建任务](zh/guide/create-task.md)
+- **架构设计**
+  - [架构总览](zh/architecture/overview.md)
+  - [三层设计 (Env / Agent / Task)](zh/architecture/layers.md)
+  - [Harness 隔离机制](zh/architecture/harness.md)
+- **智能体**
+  - [PPOTuner](zh/agents/ppotuner.md)
+  - [CurveAnalyst](zh/agents/curveanalyst.md)
+- **环境**
+  - [Go2Locomotion-PPO](zh/envs/go2-locomotion-ppo.md)
+- **任务**
+  - [Go2Tune](zh/tasks/go2tune.md)
+  - [自定义任务与环境](zh/tasks/custom.md)
+- **评测与测试**
+  - [评测报告](zh/文档/评测报告.md)
+  - [测试报告](zh/文档/测试结果文档.md)
+- **需求**
+  - [项目要求原文](zh/总-项目要求.md)
+- **开发过程**
+  - [开发过程记录](zh/开发过程记录/开发过程记录.md)
+- **参考**
+  - [DeepSeek 调用说明](zh/参考资料/调用deepseek-v4-flash.md)
+- [联系方式](zh/contact.md)
+- [English](en/README.md)

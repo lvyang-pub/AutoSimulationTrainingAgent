@@ -1,0 +1,31 @@
+<!-- _sidebar.md -->
+
+- [Introduction](en/README.md)
+- **Getting Started**
+  - [Quickstart](en/guide/quickstart.md)
+  - [Create an Agent](en/guide/create-agent.md)
+  - [Create an Environment](en/guide/create-env.md)
+  - [Create a Task](en/guide/create-task.md)
+- **Architecture**
+  - [Overview](en/architecture/overview.md)
+  - [Three Layers (Env / Agent / Task)](en/architecture/layers.md)
+  - [Harness Isolation](en/architecture/harness.md)
+- **Agents**
+  - [PPOTuner](en/agents/ppotuner.md)
+  - [CurveAnalyst](en/agents/curveanalyst.md)
+- **Environments**
+  - [Go2Locomotion-PPO](en/envs/go2-locomotion-ppo.md)
+- **Tasks**
+  - [Go2Tune](en/tasks/go2tune.md)
+  - [Custom Tasks & Environments](en/tasks/custom.md)
+- **Evaluation & Testing**
+  - [Evaluation Report](en/docs/evaluation-report.md)
+  - [Test Report](en/docs/test-report.md)
+- **Requirements**
+  - [Project Requirements](en/requirements.md)
+- **Development**
+  - [Development Log](en/dev-log.md)
+- **Reference**
+  - [DeepSeek Usage](en/reference/deepseek.md)
+- [Contact](en/contact.md)
+- [中文](zh/README.md)

@@ -1,0 +1,7 @@
+{
+  "agent_name": "StandardAgent-A",
+  "model": "deepseek-reasoner",
+  "memory_dir": "memory",
+  "log_dir": "logs",
+  "_comment": "StandardAgent-A is task-agnostic. There is no env_path or harness_path here: those belong to the task, and the schedular wires them in by constructing the agent's tools before run(). Overridden fields are set by the schedular at runtime."
+}

@@ -1,4 +1,4 @@
-[中文文档](Docs/README.zh.md)
+[中文文档](Docs/zh/README.zh.md)
 
 # Auto Simulation Training Agent (ASTA)
 
@@ -18,22 +18,24 @@ In this example, we use a digital twin of the Unitree Go2 quadruped in a MuJoCo
 environment, with the training goal of walking forward at 1 m/s.
 
 ASTA analyzes multi-modal experiment outputs (charts, logs, etc.), tunes training
-configurations, and achieves the goal in **6 trials** under a budget of at most
-200,000 simulation steps per trial. Total API cost: ¥0.12 (DeepSeek API).
+configurations, and achieves the goal in **6 trials** (~24 minutes wall-clock,
+escalating the per-trial step budget up to 1.2M steps as needed). Total API
+cost: ¥0.12 (DeepSeek API).
 
 
 ### Trial 1 vs Trial 6 (best)
 
-Comparison of the first and final trials from run `Tasks/Go2Tune/Runs/20261003_183952`.
+Comparison of the first and final trials from run `Tasks/Go2Tune/Runs/20261008_204042`.
 
 | Trial | Reward curve | Rollout |
 | :---: | :---: | :---: |
 | **Trial 1** | ![Trial 1 reward curve](assets/trials/curve_trial001.png) | ![Trial 1 rollout](assets/trials/go2_walk_trial001.gif) |
 | **Trial 6** | ![Trial 6 reward curve](assets/trials/curve_trial006.png) | ![Trial 6 rollout](assets/trials/go2_walk_trial006.gif) |
 
-The agent tuned three parameters — `kp=80, kd=2.0, action_scale=0.5` — lifting
-mean return from −10 to 129, reducing velocity error from 1.0 to 0.18, and
-bringing the fall rate to 0.
+Escape from the stand-still local optimum came down to the plant gains: after
+five trials stuck at ~1.0 velocity error, the agent settled on
+`kp=40, kd=1.6, action_scale=0.5`, lifting mean return from −10 to 786,
+reducing velocity error from 1.0 to 0.14, and bringing the fall rate to 0.
 
 
 ## Architecture

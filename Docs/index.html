@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Auto Simulation Training Agent (ASTA)</title>
+  <meta name="description" content="虚拟环境中自主训练机器人的智能体框架">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/themes/vue.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-darklight-theme@3/dist/docsify-themeable/style.min.css">
+
+  <style>
+    /* ───────── 封面：图像轮播背景 + 模糊遮罩 ───────── */
+    /* 不要覆盖 Docsify 自带定位（.cover 已是定位元素，即子元素的包含块） */
+    section.cover { overflow: hidden; }
+    /* 轮播层：铺满整个封面，每张图 5s 交替淡入淡出 */
+    .cover-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .cover-bg .bg-layer {
+      position: absolute;
+      inset: 0;
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      opacity: 0;
+      animation: bgFade 35s infinite;
+    }
+    /* 7 张图，每张占 35s 周期的 1/7（5s） */
+    .cover-bg .bg-layer:nth-child(1) { animation-delay: 0s; }
+    .cover-bg .bg-layer:nth-child(2) { animation-delay: 5s; }
+    .cover-bg .bg-layer:nth-child(3) { animation-delay: 10s; }
+    .cover-bg .bg-layer:nth-child(4) { animation-delay: 15s; }
+    .cover-bg .bg-layer:nth-child(5) { animation-delay: 20s; }
+    .cover-bg .bg-layer:nth-child(6) { animation-delay: 25s; }
+    .cover-bg .bg-layer:nth-child(7) { animation-delay: 30s; }
+    @keyframes bgFade {
+      0%      { opacity: 0; }
+      1.4%    { opacity: 1; }
+      12.8%   { opacity: 1; }
+      14.2%   { opacity: 0; }
+      100%    { opacity: 0; }
+    }
+    /* 模糊 + 压暗层，保证中间文字清晰（强度同前一版） */
+    section.cover::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      backdrop-filter: blur(10px) brightness(0.55);
+      -webkit-backdrop-filter: blur(10px) brightness(0.55);
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 1;
+    }
+    section.cover .cover-main {
+      position: relative;
+      z-index: 2;
+    }
+    /* 顶部导航：一排文字 */
+    .home-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 999;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 32px;
+      padding: 22px 48px;
+      font-size: 15px;
+    }
+    .home-nav a,
+    .home-nav .nav-label {
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+      cursor: pointer;
+    }
+    .home-nav a:hover,
+    .home-nav .nav-label:hover { opacity: 1; }
+    /* 下拉菜单 */
+    .home-nav .nav-item { position: relative; }
+    .home-nav .dropdown {
+      position: absolute;
+      top: 130%;
+      left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      background: rgba(20, 20, 20, 0.92);
+      border-radius: 8px;
+      padding: 8px 0;
+      min-width: 150px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.18s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .home-nav .nav-item:hover .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+    .home-nav .dropdown a {
+      padding: 8px 18px;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+    .home-nav .dropdown a:hover { background: rgba(255,255,255,0.1); }
+    /* 居中标题 */
+    .hero { text-align: center; }
+    .hero-title {
+      font-size: 84px;
+      font-weight: 800;
+      letter-spacing: 6px;
+      color: #fff;
+      margin: 0;
+      text-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    }
+    .hero-sub {
+      margin-top: 14px;
+      font-size: 18px;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.8);
+    }
+    /* 隐藏封面底部默认的下拉提示 */
+    section.cover .cover-main > p:last-child { display: none; }
+    /* 语言切换：封面上跟在导航末尾，内容页由侧边栏提供 */
+    .home-nav .lang-link { font-weight: 700; }
+
+    /* ───────── 侧边栏：分类可折叠 ───────── */
+    .sidebar-nav > ul > li > strong {
+      display: block;
+      cursor: pointer;
+      user-select: none;
+      margin-top: 6px;
+    }
+    .sidebar-nav > ul > li > strong::after {
+      content: '▾';
+      float: right;
+      opacity: 0.55;
+      font-size: 12px;
+      transition: transform 0.15s;
+    }
+    .sidebar-nav > ul > li.collapse > strong::after { transform: rotate(-90deg); }
+    .sidebar-nav > ul > li.collapse > ul { display: none; }
+    .sidebar-nav > ul > li > ul { margin-left: 15px; }
+  </style>
+</head>
+<body>
+  <div id="app">加载中…</div>
+
+  <script>
+    /* 根路径没有哈希时，先跳到中文首页（#/zh/），
+       避免 Docsify 在 route "/" 上找不到 coverpage。 */
+    if (!location.hash || location.hash === '#' || location.hash === '#/') {
+      location.replace(location.pathname + location.search + '#/zh/')
+    }
+
+    window.$docsify = {
+      name: 'ASTA',
+      repo: 'lvyang-pub/AutoSimulationTrainingAgent',
+      loadSidebar: true,
+      loadNavbar: false,
+      /* 每个语言目录各有自己的 _coverpage.md（route 精确匹配） */
+      coverpage: ['/zh/', '/en/'],
+      subMaxLevel: 3,
+      auto2top: true,
+      homepage: 'zh/README.md',
+      notFoundPage: true,
+      search: {
+        placeholder: '搜索文档…',
+        noData: '没有找到结果',
+        depth: 3,
+      },
+      pagination: {
+        previousText: '上一页',
+        nextText: '下一页',
+      },
+    }
+    /* 默认折叠的分类（按标题文字匹配），以及当前页所属分类的自动展开 */
+    var COLLAPSED = ['智能体', '环境', '任务', 'Agents', 'Environments', 'Tasks']
+    var MEMBER = [
+      { prefix: 'zh/agents/', label: '智能体' },
+      { prefix: 'zh/envs/', label: '环境' },
+      { prefix: 'zh/tasks/', label: '任务' },
+      { prefix: 'en/agents/', label: 'Agents' },
+      { prefix: 'en/envs/', label: 'Environments' },
+      { prefix: 'en/tasks/', label: 'Tasks' },
+    ]
+
+    function setupSidebar() {
+      var path = (location.hash.replace(/^#\/?/, '') || 'zh/README.md').split('?')[0]
+      var member = MEMBER.filter(function (r) { return path.indexOf(r.prefix) === 0 })[0]
+      Array.prototype.forEach.call(
+        document.querySelectorAll('.sidebar-nav > ul > li'),
+        function (li) {
+          var strong = li.querySelector(':scope > strong')
+          if (!strong || !li.querySelector(':scope > ul')) return
+          var label = strong.textContent.trim()
+          // 点击分类标题：折叠 / 展开
+          if (!strong.dataset.toggled) {
+            strong.dataset.toggled = '1'
+            strong.addEventListener('click', function () {
+              li.classList.toggle('collapse')
+            })
+          }
+          // 当前页所属分类自动展开，其余按默认折叠
+          if (member && label === member.label) {
+            li.classList.remove('collapse')
+          } else if (COLLAPSED.indexOf(label) > -1) {
+            li.classList.add('collapse')
+          }
+        }
+      )
+    }
+
+    window.$docsify.plugins = (window.$docsify.plugins || []).concat(function (hook) {
+      // 把轮播背景直接挂到 section.cover 下（绕开居中的窄列 .cover-main）
+      hook.doneEach(function () {
+        var cover = document.querySelector('section.cover')
+        if (cover && !cover.querySelector('.cover-bg')) {
+          var urls = [
+            'assets/go2_walk.gif',
+            'assets/trials/go2_walk_trial001.gif',
+            'assets/trials/go2_walk_trial006.gif',
+            'assets/arch_diagram.png',
+            'assets/flow_diagram.png',
+            'assets/trials/curve_trial001.png',
+            'assets/trials/curve_trial006.png',
+          ]
+          var wrap = document.createElement('div')
+          wrap.className = 'cover-bg'
+          urls.forEach(function (u) {
+            var d = document.createElement('div')
+            d.className = 'bg-layer'
+            d.style.backgroundImage = "url('" + u + "')"
+            wrap.appendChild(d)
+          })
+          cover.insertBefore(wrap, cover.firstChild)
+        }
+        setupSidebar()
+      })
+    })
+  </script>
+
+  <!-- Docsify + plugins -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-darklight-theme@3/dist/docsify-themeable/index.min.js"></script>
+
+  <!-- Prism syntax highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
+</body>
+</html>
