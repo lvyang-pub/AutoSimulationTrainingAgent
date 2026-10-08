@@ -20,7 +20,7 @@
 ## Case Study
 
 > 🚧 TODO: summary of the Unitree Go2 walking case — a Go2 digital twin, goal of 1 m/s
-> forward walking, reached in 6 trials at a token cost of ¥0.12. Include the trial 1 vs
+> forward walking, reached in 6 trials at a token cost of ¥0.07. Include the trial 1 vs
 > trial 6 comparison table and the two GIFs.
 
 | Trial | Reward curve | Walking |

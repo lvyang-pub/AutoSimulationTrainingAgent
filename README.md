@@ -20,7 +20,7 @@ environment, with the training goal of walking forward at 1 m/s.
 ASTA analyzes multi-modal experiment outputs (charts, logs, etc.), tunes training
 configurations, and achieves the goal in **6 trials** (~24 minutes wall-clock,
 escalating the per-trial step budget up to 1.2M steps as needed). Total API
-cost: ¥0.12 (DeepSeek API).
+cost: ¥0.07 (DeepSeek API).
 
 
 ### Trial 1 vs Trial 6 (best)
