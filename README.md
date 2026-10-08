@@ -1,4 +1,4 @@
-[中文文档](Docs/zh/README.zh.md)
+[中文文档](docs/zh/README.zh.md)
 
 # Auto Simulation Training Agent (ASTA)
 
